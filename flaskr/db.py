@@ -26,12 +26,21 @@ def close_db(e=None):
 def init_db():
 	db = get_db()
 
+	# open_resource looks for file local to flaskr package
 	with current_app.open_resource('schema.sql') as f:
 		db.executescript(f.read().decode('utf-8'))
 
+# click.command creates a CLI command called init_db
 @click.command('init_db')
 @with_appcontext
 def init_db_command():
 	"""Clear the existing data and create new tables."""
 	init_db()
 	click.echo('Initialized the database')
+
+# Register necessary functions to the application
+def init_app(app):
+	# app.teardown_appcontext specifies function to call after returning response
+	app.teardown_appcontext(close_db)
+	# app.cli.add_command adds new command that can be called via flask CLI (>flast command)
+	app.cli.add_command(init_db_command)
