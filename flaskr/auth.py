@@ -56,18 +56,18 @@ def login():
 			'SELECT * FROM user WHERE username = ?', (username, )
 		).fetchone()
 
-	if user is None:
-		error = 'Incorrect username.'
-	elif not check_password_hash(user['password'], password):
-		error = "Incorrect password."
+		if user is None:
+			error = 'Incorrect username.'
+		elif not check_password_hash(user['password'], password):
+			error = "Incorrect password."
 
-	if error is None:
-		# Session is dict with data stored across sessions
-		session.clear()
-		session['user_id'] = user['id']
-		return redirect(url_for('index'))
+		if error is None:
+			# Session is dict with data stored across sessions
+			session.clear()
+			session['user_id'] = user['id']
+			return redirect(url_for('index'))
 
-	flash(error)
+		flash(error)
 
 	return render_template('auth/login.html')
 
