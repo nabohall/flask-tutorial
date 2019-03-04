@@ -88,3 +88,14 @@ def logout():
 	session.clear()
 	return redirect(url_for('index'))
 
+
+# Create decorator to be called before loading the view
+def login_required(view):
+	@functools.wraps(view)
+	def wrapped_view(**kwargs):
+		if g.user is None:
+			# This is how to call things from blueprint.
+			return redirect(url_for('auth.login'))
+
+		return view(**kwargs)
+	return wrapped_view
